@@ -1,4 +1,4 @@
 # Anotacao_de_compras
  Site para anotação de compras
  
-# https://anotacaodecompras.web.app/
+# https://alefdejesus.github.io/Anota-o-de-compras/
