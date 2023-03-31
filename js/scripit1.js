@@ -1,153 +1,109 @@
-class Produto {
-    constructor(){
-        this.id = 1
-        this.arrayProdutos = []
-		this.multPreco = ''
-        this.multQuantidade = ''
-        this.saida = []
-    }
-    
-    salvar(){
-       var produto = this.lerDados()
-       if(this.validaCampos(produto)){
-           this.adicionar(produto)
-          
-       }
-        this.listaTabela()
-        this.cancelar()
-        document.getElementById('produto').focus()
+window.onload = function(){
+	imprimirProdutos();
+}
+function imprimirProdutos() {
 
+  let tbody = document.getElementById('tbody');
+  tbody.innerText = ''
+  for (let i = 0; i < localStorage.length; i++) {
+    let key = localStorage.key(i);
+    let value = JSON.parse(localStorage.getItem(key));
+    
+        var tr = tbody.insertRow()
+        var td_produto = tr.insertCell()
+        var td_quantidade = tr.insertCell()
+        var td_preco = tr.insertCell()
+        var td_acao = tr.insertCell()
+
+        td_produto.innerText = value[0].toUpperCase()
+        td_quantidade.innerText = value[1]
+        td_preco.innerText = `R$ ${value[2]}`
+        td_acao.innerHTML = ` <button onclick = "excluir('${value[0]}')" id="${value[0]}">Deletar</button>`
         
-    }
+       
+
+        //O CODIGO ABAIXO ADICIONA UMA CLASSE DENTRO DA TAG TD PELO JS E DEIXA AS PALVRAS NO CENTRO
+        td_quantidade.classList.add('center')
+		td_preco.classList.add('center')
+		td_produto.classList.add('center')
+        td_acao.classList.add('center')
+  }
+
+	
+}
+
+function adicionar(){
+	let listaProdutos = document.getElementById('listaProdutos')
+	let produto = document.getElementById('produto').value
+	let quantidade = document.getElementById('quantidade').value
+	let preco = document.getElementById('preco').value
+
     
-    listaTabela(){
-        var tbody = document.getElementById('tbody')
-        tbody.innerText = ''
-        for ( var i = 0;i<this.arrayProdutos.length;i++){
-            var tr = tbody.insertRow()
-          //  var td_id = tr.insertCell()
-            var td_produto = tr.insertCell()
-            var td_quantidade = tr.insertCell()
-            var td_preco = tr.insertCell()
-            var td_acao = tr.insertCell()
-           
-
-           // td_id.innerText = this.arrayProdutos[i].id
-            td_produto.innerText = this.arrayProdutos[i].nomeProduto.toUpperCase()
-            td_quantidade.innerText = this.arrayProdutos[i].quantidade
-            td_preco.innerText = `R$${this.arrayProdutos[i].preco}`
-                      //  td_mult.innerText = this.mult   
-//O CODIGO ABAIXO ADICIONA UMA CLASSE DENTRO DA TAG TD PELO JS E DEIXA AS PALVRAS NO CENTRO
-          //  td_id.classList.add('center')
-			  td_quantidade.classList.add('center')
-			  td_preco.classList.add('center')
-			  td_produto.classList.add('center')
-          
-
-            var imgDelet = document.createElement('img')
-            imgDelet.src = 'img/delet.png'
-        imgDelet.setAttribute("onclick","produto.deletar("+this.arrayProdutos[i].id+")")
-            td_acao.appendChild(imgDelet)//isso faz <td><img></td>
-            td_acao.classList.add('center')
-
-        }
+    if(document.getElementById("produto").value.length < 1){
+        window.alert('Digite o Nome de um Produlto!')
     }
-    adicionar(produto){
-        this.arrayProdutos.push(produto)
-        this.id++
-        this.saida=[]
-       console.log(produto)
-      
+    if(document.getElementById("quantidade").value.length < 1){
+        window.alert('Digite a Quantidade!')
+    }
+    if(document.getElementById("preco").value.length < 1){
+        window.alert('Digite o Preço!')
+
      
     }
-    lerDados(){
-        var produto = {}
+    //A VARIAVEL ABAIXO MULTIPLICA A QUANTIDADE POR PRECO E GUARDA NO ARRAY NO LOCALSTORAGE.
+   let arrayProduto = []
+   let id = produto
+   let total = quantidade * preco
+   arrayProduto.push(produto, quantidade, preco, total)
+   localStorage.setItem(produto,JSON.stringify(arrayProduto))
+   console.log(arrayProduto)
+	
+   imprimirProdutos();
+	
+    
+	 
+  //CODIGO ABAIXO LIMPA OS IMPUTS APOS ADICIONAR OS VALORES NO ARRAY
+  document.getElementById('produto').value = ''
+  document.getElementById('quantidade').value = ''
+  document.getElementById('preco').value = ''
+  final.innerHTML = '' 
 
-        produto.id = this.id
-        produto.nomeProduto = document.getElementById('produto').value
-        produto.quantidade = document.getElementById('quantidade').value
-        produto.preco = document.getElementById('preco').value
-
-        return produto
-
-    }
-    validaCampos(produto){
-        var msg = ''
-        if(produto.nomeProduto == ''){
-            msg += '*Favor informe o nome do produto \n'
-    }   
-    if(produto.quantidade == ''){
-        msg += '*Favor informe a quantidade de produto \n'
-  
-    }
-    if(produto.preco == ''){
-        msg += '*Favor informe o preco do produto \n'
-  
-    }
-    if (msg != ''){
-        alert(msg)
-        return false
-    }
-    return true
-   
-} 
-
-    cancelar(){
-            document.getElementById('produto').value = ''
-            document.getElementById('quantidade').value = ''
-            document.getElementById('preco').value = ''
-        
-    }
-    deletar(id){
-       
-        var tbody = document.getElementById('tbody')
-        for(var i = 0; i < this.arrayProdutos.length;i++){
-            if(this.arrayProdutos[i].id == id){
-                this.arrayProdutos.splice(i,1)
-                tbody.deleteRow(i)
-                
-               
-            }
-            
-        }
-        this.total = ''
-        this.tr_total.innerText = ''
-     
-    }
-    precoFinal(){
-        for(var i = 0; i < this.arrayProdutos.length;i++){
-
-            //ESSAS DUAS VARIAVEIS ABAIXO AMAZENA O VALOR DE PRECO E QUANTIDADE DENTRO DELAS
-              this.multPreco = this.arrayProdutos[i].preco
-              this.multQuantidade = this.arrayProdutos[i].quantidade
-
-             //O ARRAY ABAIXO MULTIPLICA QUANTIDADE POR PRECO
-              this.saida.push( this.multQuantidade*this.multPreco)
-
-                //A FUNÇÃO ABAIXO SOMA TODOS OS VALORAS QUE ESTA DENTRO DO ARRAY SAIDA[]
-                 this.total = this.saida.reduce(function(total, saida){
-                      return total + saida;
-                     }, 0);
-            
-       }
-            if(this.total == ''){
-                alert('*Adicione um Produto!')
-                this.tr_total = ''
-            }
-            this.trw = tbody.insertRow()
-             
-        this.tr_total = this.trw.insertCell()
-        this.tr_total.innerHTML = `Total:<strong> R$${this.total.toFixed(2)} </strong>`
-             console.log(this.total)
-             this.tr_total.classList.add('tr_total')
-      
-    }
-    finalizar(){
-        this.precoFinal()
-        this.saida=[]
-       
     } 
-    
-    
-}  
-var produto = new Produto()
+	
+  ////////////////////EXCLUIR\\\\\\\\\\\\\\\\\  
+	function excluir(idProduto) {
+  localStorage.removeItem(idProduto);
+  imprimirProdutos();
+}
+	
+  //SCRIPT QUE FAZ A SOMA DOS PRECOS DE TODOS OS PRODUTOS QUE ESTA ARMAZENADO NO LOCAL STORAGE.
+
+    function finalizar(){
+      let totalCompras = document.getElementById('totalCompras')
+       let arrayTotal = [];
+       let somaArray = 0;
+
+      for (let i = 0; i < localStorage.length; i++) {
+        let key = localStorage.key(i);
+        let value = JSON.parse(localStorage.getItem(key));
+        let said = value[3]
+        arrayTotal.push(said)
+        console.log(arrayTotal)
+       
+      }
+      for (let  i = 0; i < arrayTotal.length; i++){
+        somaArray += arrayTotal[i]
+      }
+     
+
+        var tbodyTotal = tbody.insertRow()    
+        var tr_total = tbodyTotal.insertCell()
+        tr_total.innerHTML = `Total:<strong> R$${somaArray.toFixed(2)} </strong>`
+        console.log(somaArray)
+        tr_total.classList.add('tr_total')
+
+   
+}    
+
+
+  
